@@ -1,0 +1,5 @@
+"0","cat(""The number of data points = "", nrow(df), ""\n"")"
+"1","The number of data points =  250 
+"
+"0","cat(""The number of variables = "", ncol(df))"
+"1","The number of variables =  13"

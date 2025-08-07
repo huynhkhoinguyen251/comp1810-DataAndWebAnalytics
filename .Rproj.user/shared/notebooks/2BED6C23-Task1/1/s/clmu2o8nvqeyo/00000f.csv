@@ -1,0 +1,4 @@
+"0","ggplot(relationship, aes(x = Conversion.Rate...., y = Revenue)) +"
+"0","  geom_point() +"
+"0","  geom_smooth(method = ""lm"", color = ""lightgreen"", se = FALSE) +"
+"0","  labs(title = ""Conversion Rate vs Revenue chart"")"

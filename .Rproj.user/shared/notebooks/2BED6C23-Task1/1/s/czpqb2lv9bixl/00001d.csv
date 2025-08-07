@@ -1,0 +1,8 @@
+"0","# use corrplot library to create heatmap chart"
+"0","ggcorrplot(cor_matrix, "
+"0","           lab = TRUE,"
+"0","         type = ""lower"","
+"0","         colors = c(""green"", ""pink"", ""lightblue""),"
+"0","         tl.srt = 45, "
+"0","         title = ""Heat map of correlation for Bounce Rate - Conversion Rate - Transactions - Revenue"","
+"0","         )"

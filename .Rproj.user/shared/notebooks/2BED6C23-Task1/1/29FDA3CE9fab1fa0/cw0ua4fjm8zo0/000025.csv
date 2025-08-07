@@ -1,0 +1,5 @@
+"0",""
+"0","#create chart and fill chart for top3 (each year)"
+"0","ggplot(top_three_revenue, aes(x = factor(Year), y = total_revenue, fill = `Source...Medium`)) + geom_bar (stat = ""identity"", position = ""dodge"") + "
+"0","labs(title = ""Top three and the Revenue each year"", "
+"0","x = ""Year"", y = ""Revenue (million)"") + theme_minimal()"

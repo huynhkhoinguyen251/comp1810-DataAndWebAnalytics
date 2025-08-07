@@ -1,0 +1,165 @@
+---
+title: "DataCleaning"
+author: "Tran Le"
+date: "2025-06-26"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Lab 5 - Cleaning Data - Missing values Imputation
+
+## Step 0: Install & Loading Packages
+
+```{r}
+# install.packages(c("tidyverse", "readr", "imputeTS", "naniar", "VIM", "recipes"))
+# install.packages(c("VIM", "recipes"))
+install.packages(c("Hmisc"))
+```
+
+```{r}
+library(tidyverse) #include dplyr, ggplot2, ...
+library(readr)
+library(imputeTS) #Time-series missing data imputation
+library(naniar) #help us to summarise and visualize missing data
+library(dplyr)
+library(Hmisc)
+library(skimr)
+library(VIM) #Visualization and Imputation of Missing values: kNN(), aggr(), matrixplot()
+library(recipes)
+```
+
+## Step 1: Read and Understand the Dataset
+
+```{r}
+df <- read.csv("missingLemonade2016.csv",
+               encoding = "latin1",
+               fileEncoding = "latin1")
+head(df)
+```
+
+```{r}
+raw <- read_csv("missingLemonade2016.csv", show_col_types = FALSE)
+head(raw)
+```
+
+### Dimension of dataset
+
+```{r}
+cat("The number of data points = ", nrow(raw), "\n")
+cat("The number of variables = ", ncol(raw))
+```
+
+```{r}
+describe(raw)
+```
+
+```{r}
+glimpse(raw) #help us to see the null data (highligted by red)
+```
+
+### Classify categorical/numerical varibales
+
+```{r}
+skim(raw)
+```
+
+```{r}
+sapply(raw, class)
+```
+
+**Conclusion:** By checking dtypes, we have
+
+-   Numerical: Lemon, Temperature, Leaflets, Total Sales
+
+-   Categorical (Character): Date, Location, Orange, Price, Revenue
+
+```{r}
+for (value in raw$Price){
+  print(value)
+  print(class(value))
+  print("--------")
+}
+```
+
+### Checking null values
+
+```{r}
+colSums(is.na(raw)) #return the real null values (NA - empty values)
+```
+
+```{r}
+
+```
+
+```{r}
+naniar::miss_var_summary(raw)
+```
+
+```{r}
+naniar::vis_miss(raw) + theme_light()
+```
+
+## Step 2: EDA
+
+### Checking the frequency of some categorical variables (stored as character)
+
+```{r}
+raw %>% count(Location) %>%
+  ggplot(aes(x=Location, y=n)) + geom_bar(stat = "identity", width=0.2, fill="blue")
+```
+
+```{r}
+raw %>% filter(Location == "na")
+```
+
+```{r}
+raw %>% count(Orange) %>%
+  ggplot(aes(x=Orange, y=n)) + geom_bar(stat = "identity", width=0.1, fill="pink")
+```
+
+```{r}
+raw %>% filter(Orange == "na")
+```
+
+```{r}
+raw %>% count(Price) %>%
+  ggplot(aes(x=Price, y=n)) + geom_bar(stat = "identity", width=0.3, fill="red")
+```
+
+```{r}
+raw %>% filter(Price == "--")
+```
+
+```{r}
+raw %>% count(Date) %>%
+  ggplot(aes(x=Date, y=n)) + geom_bar(stat = "identity", width=0.1, fill="green")
+```
+
+```{r}
+raw %>% filter(Date == "na")
+```
+
+### Conclusion about the dataset
+
+Combining eyeballing, observing and analyzing the dataset, we can conclude:
+
+1.  The dataset has 31 data points and 9 variables.
+2.  After double check and observing dataset, we have
+    -   Numerical columns: Lemon, Orange, Temperature, Leafles, Price, Total Sales and Revenue (7 columns)
+
+    -   Catgorical columns: Location
+
+    -   Time-series: Date (follow 1st to 31st day of July)
+3.  About issues:
+    -   Dtypes: Orange col has "na" values; Price col contains "--" values, Revenue col contains currencies in each value –\> so that why Orange, Price and Revenue stored as character =\> Solution: we need to convert data types. Date col must be converted to time-series with format MM-DD-YYYY (using `parse_number()`).
+
+    -   Missing values: not only the empty (real null values) but also "na" or "--" are considered as null values
+
+        -\> Columns contain null values: Leaflets - 3 null; Lemon - 2 null; Orange - 3 null (2 empty and 1 "na"); Temperature - 2 null; Total Sales - 2 null; Revenue - 2 null; Location - 1 null; Date - 1 null ("na"); Price - 2 null ("--")
+
+```{r}
+naniar::miss_var_summary(raw)
+```

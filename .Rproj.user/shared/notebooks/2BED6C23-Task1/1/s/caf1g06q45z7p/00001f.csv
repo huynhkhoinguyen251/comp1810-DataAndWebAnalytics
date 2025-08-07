@@ -1,0 +1,8 @@
+"0","#table of conversion rate"
+"0","conversion_rate <- df %>%"
+"0","  group_by(Year, Month.of.the.year, `Source...Medium`) %>%"
+"0","  summarise(total_conversion = sum(`Conversion.Rate....`, na.rm = TRUE))"
+"2","[38;5;232m`summarise()` has grouped output by 'Year', 'Month.of.the.year'. You can override
+using the `.groups` argument.[39m
+"
+"0","print(conversion_rate)"

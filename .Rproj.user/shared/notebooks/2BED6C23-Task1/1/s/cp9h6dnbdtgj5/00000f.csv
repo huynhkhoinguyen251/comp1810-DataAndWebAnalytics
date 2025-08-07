@@ -1,0 +1,6 @@
+"0","# change NA = median"
+"0","df2_cleaned[cols_to_fix] <- lapply(df2_cleaned[cols_to_fix], function(x) {"
+"0","  ifelse(is.na(x), median(x, na.rm = TRUE), x)"
+"0","})"
+"0",""
+"0","print(df2_cleaned)"

@@ -1,0 +1,6 @@
+"0","sapply(df2, class)"
+"1","             Pregnancies                  Glucose            BloodPressure            SkinThickness                  Insulin                      BMI DiabetesPedigreeFunction 
+               ""integer""                ""integer""                ""integer""                ""integer""                ""integer""                ""numeric""                ""numeric"" 
+                     Age                  Outcome 
+               ""integer""                ""integer"" 
+"

@@ -1,0 +1,4 @@
+"0","ggplot(relationship, aes(x = Transactions, y = Revenue)) +"
+"0","  geom_point() +"
+"0","  geom_smooth(method = ""lm"", color = ""green"", se = FALSE) +"
+"0","  labs(title = ""Transactions vs Revenue chart"")"

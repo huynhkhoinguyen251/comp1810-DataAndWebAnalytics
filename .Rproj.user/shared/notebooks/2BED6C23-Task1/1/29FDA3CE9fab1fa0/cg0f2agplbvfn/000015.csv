@@ -1,0 +1,6 @@
+"0",""
+"0","#chart of Conversion"
+"0","ggplot(conversion_rate, aes(x = factor(YearMonth), y = total_conversion, fill = `Source...Medium`)) + geom_bar (stat = ""identity"", position = ""dodge"") + "
+"0","labs(title = "" Conversion rate for each devices for each year and month "", "
+"0","x = ""Year and Month"", y = ""Conversion"") + theme_minimal()"
+"0",""

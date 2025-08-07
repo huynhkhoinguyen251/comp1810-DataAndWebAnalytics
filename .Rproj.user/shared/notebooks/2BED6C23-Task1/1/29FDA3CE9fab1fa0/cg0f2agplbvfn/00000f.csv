@@ -1,0 +1,13 @@
+"0","#view access devices used by customers or visitors to access the site (assume source/medium is device)"
+"0","#change to numeric instead of character"
+"0","df$Sessions <- as.numeric(gsub("","", """", df$Sessions))"
+"0","df$`Conversion.Rate....` <- as.numeric(gsub("","", """", df$`Conversion.Rate....`))"
+"0",""
+"0",""
+"0","#table of accessed device"
+"0","accessed_devices <- df %>%"
+"0","  group_by(Year, Month.of.the.year, `Source...Medium`) %>%"
+"0","  summarise(total_sessions = sum(Sessions, na.rm = TRUE))"
+"2","[38;5;232m`summarise()` has grouped output by 'Year', 'Month.of.the.year'. You can override using the `.groups` argument.[39m
+"
+"0","print(accessed_devices)"

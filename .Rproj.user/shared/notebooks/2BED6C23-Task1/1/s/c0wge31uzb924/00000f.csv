@@ -1,0 +1,6 @@
+"0","# Change to numeric instead of character"
+"0","df$`Bounce.Rate` <- as.numeric(sub(""%"", """", df$`Bounce.Rate`)) / 100"
+"0","df$`Conversion.Rate....` <- as.numeric(df$`Conversion.Rate....`)"
+"0","df$Transactions <- as.numeric(gsub("","", """", df$Transactions))"
+"0","df$Revenue <- as.numeric(gsub("","", """", df$Revenue))"
+"0",""

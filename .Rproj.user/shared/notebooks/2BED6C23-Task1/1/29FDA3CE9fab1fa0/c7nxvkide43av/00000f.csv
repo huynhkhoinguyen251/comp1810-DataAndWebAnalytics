@@ -1,0 +1,8 @@
+"0","sapply(df, class)"
+"1","      Source...Medium                  Year     Month.of.the.year                 Users             New.Users 
+          ""character""             ""integer""             ""integer""           ""character""           ""character"" 
+             Sessions           Bounce.Rate             Pageviews Avg..Session.Duration   Conversion.Rate.... 
+          ""character""           ""character""           ""character""           ""character""           ""character"" 
+         Transactions               Revenue         Quantity.Sold 
+          ""character""           ""character""           ""character"" 
+"

@@ -1,0 +1,6 @@
+"0",""
+"0","#view top3 revenue"
+"0","top_three_revenue <- top_sources %>%"
+"0","  group_by(Year) %>%"
+"0","  slice_max(order_by = total_revenue, n = 3)"
+"0","print(top_three_revenue)"

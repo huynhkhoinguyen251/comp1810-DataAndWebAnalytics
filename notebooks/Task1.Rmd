@@ -1,0 +1,370 @@
+---
+title: "Task1"
+author: "Nguyen Huynh"
+date: "2025/5/7"
+output: html_document
+---
+
+```{r}
+install.packages(c("tidyverse", "readr", "imputeTS", "naniar", "VIM", "recipes", "ggplot2"))
+```
+
+```{r}
+install.packages(c("VIM", "recipes"))
+```
+
+```{r}
+install.packages(c("Hmisc"))
+```
+
+```{r}
+install.packages(c("corrplot"))
+```
+
+```{r}
+install.packages(c("ggcorrplot"))
+```
+
+```{r}
+library(tidyverse) #include dplyr, ggplot2, ...
+library(readr)
+library(imputeTS) #Time-series missing data imputation
+library(naniar) #help us to summarise and visualize missing data
+library(dplyr)
+library(Hmisc)
+library(skimr)
+library(VIM) #Visualization and Imputation of Missing values: kNN(), aggr(), matrixplot()
+library(recipes)
+library(ggplot2)
+library(corrplot)
+library(ggcorrplot)
+```
+
+# Task 1:
+
+### Read and Understand the Dataset
+
+```{r}
+df <- read.csv("../data/Web Analytic_Dataset.csv", sep=";")
+print(df)
+```
+
+```{r}
+cat("The number of data points = ", nrow(df), "\n")
+cat("The number of variables = ", ncol(df))
+```
+
+```{r}
+sapply(df, class)
+```
+
+## a. Comparative Analysis of the source of traffic to the website.
+
+```{r}
+df$Source...Medium
+```
+
+```{r}
+#view revenue
+df$Revenue <- as.numeric(gsub(",", "", df$Revenue))
+top_sources <- df %>%
+  group_by(Year, `Source...Medium`) %>%
+  summarise(total_revenue = sum(Revenue, na.rm = TRUE), .groups = "drop") %>%
+  arrange(desc(total_revenue)) %>%
+  print(total_revenue)
+
+#view top3 revenue
+top_three_revenue <- top_sources %>%
+  group_by(Year) %>%
+  slice_max(order_by = total_revenue, n = 3)
+print(top_three_revenue)
+
+#create chart and fill chart for top3 (each year)
+ggplot(top_three_revenue, aes(x = factor(Year), y = total_revenue, fill = `Source...Medium`)) + 
+  
+  geom_bar (stat = "identity", position = "dodge") + 
+  
+  geom_text(aes(label = scales::comma(total_revenue)),
+            position = position_dodge(width = 0.9),
+            vjust = -0.3, size = 3.5) +
+  
+labs(title = "Top three and the Revenue each year", 
+x = "Year", y = "Revenue (million)", fill = "Sources of Traffic") + 
+  
+theme_minimal()
+```
+
+## b. Comparative analysis of the devices used by customers or visitors to access the site.
+
+```{r}
+#change to numeric instead of character
+df$Sessions <- as.numeric(gsub(",", "", df$Sessions))
+df$`Conversion.Rate....` <- as.numeric(gsub(",", "", df$`Conversion.Rate....`))
+df$Users <- as.numeric(gsub(",", "", df$Users))
+df$New.Users <- as.numeric(gsub(",", "", df$New.Users))
+```
+
+-   **Analysis(devices) follows users /new users**
+
+    Users:
+
+```{r}
+#USERS
+
+#table of summary device
+summary_device <- df %>%
+  group_by(Source...Medium) %>%
+  summarise(
+    total_users = sum(Users, na.rm = TRUE),
+    total_newusers = sum(New.Users, na.rm = TRUE),
+    .groups = "drop"
+  ) %>%
+print(summary_device)
+
+#chart of summary device / total users
+ggplot(summary_device, aes(x = total_users, y = reorder(`Source...Medium`, total_users), fill = total_users)) + 
+  
+  geom_bar (stat = "identity", position = "dodge") + 
+  
+  scale_fill_gradient(name = "Number of Users") + 
+  
+labs(title = " Total Users by Devices", x = "Total Users", y = "Devices") + 
+  theme_minimal()
+```
+
+New Users:
+
+```{r}
+#NEWUSERS
+
+#chart of summary device / total new users
+ggplot(summary_device, aes(x = total_newusers, y = reorder(`Source...Medium`, total_users), fill = total_newusers)) + 
+  
+  geom_bar (stat = "identity", position = "dodge") + scale_fill_gradient(name = "Number of New Users") + 
+  
+labs(title = " Total New Users by Devices", x = "Total New Users", y = "Devices") + 
+  theme_minimal()
+```
+
+-   **Analysis(sessions) follows devices, year-month**
+
+```{r}
+#table of accessed device
+accessed_devices <- df %>%
+  group_by(Year, Month.of.the.year, `Source...Medium`) %>%
+  summarise(total_sessions = sum(Sessions, na.rm = TRUE))
+print(accessed_devices)
+
+#summarize year and month in accessed_devices
+accessed_devices$YearMonth <- paste(accessed_devices$Year, sprintf("%02d", accessed_devices$Month.of.the.year), sep ="-" )
+
+#chart of Sessions
+ggplot(accessed_devices, aes(x = factor(YearMonth), y = total_sessions, fill = `Source...Medium`)) + geom_bar (stat = "identity", position = "dodge") +
+labs(title = " Devices used by customers/visitors to
+access the site for each devices ",
+x = "Year and Month", y = "Sessions") + theme_minimal()
+
+```
+
+-   **Analysis(conversion) follows devices, year-month**
+
+```{r}
+#table of conversion rate
+conversion_rate <- df %>%
+  group_by(Year, Month.of.the.year, `Source...Medium`) %>%
+  summarise(total_conversion = sum(`Conversion.Rate....`, na.rm = TRUE))
+print(conversion_rate)
+
+#summarize year and month in conversion_rate
+conversion_rate$YearMonth <- paste(conversion_rate$Year, sprintf("%02d", conversion_rate$Month.of.the.year), sep = "-")
+
+#chart of Conversion
+ggplot(conversion_rate, aes(x = factor(YearMonth), y = total_conversion, fill = `Source...Medium`)) + geom_bar (stat = "identity", position = "dodge") + 
+labs(title = " Total Conversion for each devices for each year and month ", 
+x = "Year and Month", y = "Total Conversion") + theme_minimal()
+```
+
+## c. The relationship between Bounce Rate, Conversion, Transaction, and Revenue.
+
+```{r}
+# Change to numeric instead of character
+df$`Bounce.Rate` <- as.numeric(sub("%", "", df$`Bounce.Rate`)) / 100
+df$`Conversion.Rate....` <- as.numeric(df$`Conversion.Rate....`)
+df$Transactions <- as.numeric(gsub(",", "", df$Transactions))
+df$Revenue <- as.numeric(gsub(",", "", df$Revenue))
+
+```
+
+-   Create Cormatrix table
+
+```{r}
+# correlation analysis
+cor_matrix <- cor(relationship, use="complete.obs")        # use="" check for NA
+print(cor_matrix)
+```
+
+-   Heat map: show correlation for pairs (numerical features)
+
+```{r}
+# use corrplot library to create heatmap chart
+ggcorrplot(cor_matrix, 
+           lab = TRUE,
+         type = "lower",
+         colors = c("green", "pink", "lightblue"),
+         tl.srt = 45, 
+         title = "Heat map of correlation for Bounce Rate - Conversion Rate - Transactions - Revenue",
+         )
+```
+
+-   Scatter plot for each pair ( Bounce Rate vs Conversion )
+
+```{r}
+ggplot(relationship, aes(x = Bounce.Rate, y = Conversion.Rate....)) +
+  geom_point() +
+  geom_smooth(method = "lm", color = "red", se = FALSE) +
+  labs(title = "Bounce Rate vs Conversion Rate chart")
+```
+
+-   Scatter plot for each pair ( Transactions vs Revenue )
+
+```{r}
+ggplot(relationship, aes(x = Transactions, y = Revenue)) +
+  geom_point() +
+  geom_smooth(method = "lm", color = "green", se = FALSE) +
+  labs(title = "Transactions vs Revenue chart")
+```
+
+-   Scatter plot for each pair ( Conversion Rate vs Revenue )
+
+```{r}
+ggplot(relationship, aes(x = Conversion.Rate...., y = Revenue)) +
+  geom_point() +
+  geom_smooth(method = "lm", color = "lightgreen", se = FALSE) +
+  labs(title = "Conversion Rate vs Revenue chart")
+```
+
+-   Scatter plot for each pair ( Conversion Rate vs Transaction )
+
+    ```{r}
+    ggplot(relationship, aes(x = Conversion.Rate...., y = Transactions)) +
+      geom_point() +
+      geom_smooth(method = "lm", color = "lightgreen", se = FALSE) +
+      labs(title = "Conversion Rate vs Transaction chart")
+    ```
+
+# Task 2:
+
+### Read and understand the Data Set
+
+```{r}
+df2 <- read.csv("../data/diabetes.csv", sep=",") 
+print(df2)
+```
+
+```{r}
+sapply(df2, class)
+```
+
+## d. Descriptive analysis of each column showing the following statistical values "mean, median, sd, variance"
+
+```{r}
+summary_stats <- data.frame(
+  Mean = sapply(df2, mean, na.rm = TRUE),
+  Median = sapply(df2, median, na.rm = TRUE),
+  SD = sapply(df2, sd, na.rm = TRUE),
+  Variance = sapply(df2, var, na.rm = TRUE)
+)
+
+print(summary_stats)
+```
+
+```{r}
+for (col in names(df2)) {
+  p <- ggplot(df2, aes_string(x = col)) +
+    geom_histogram(bins = 30, fill = "skyblue", color = "black") +
+    labs(title = paste("Histogram of", col, "before cleaning"),
+         x = col, y = "Frequency") +
+    theme_minimal()
+  
+  print(p)  # in từng biểu đồ ra
+}
+```
+
+### Descriptive Analysis (Before Cleaning)
+
+We performed a descriptive statistical analysis of each numerical column in the dataset `diabetesd.csv`. The table below presents the mean, median, standard deviation, and variance for all 9 variables. This helps identify variables with high dispersion or outliers.
+
+In addition, histograms for each variable were generated to visualize the distribution of values before any data cleaning. These charts help identify skewed distributions, missing value patterns, or anomalies (e.g., zero values for Glucose, BMI, Insulin, etc.).
+
+## e. Identify any error and provide a detailed explanation how to correct errors
+
+-   Identify errors
+
+```{r}
+summary(df2)         # checkout the outliner to find errors
+str(df2)             # check out the data type per columns
+sapply(df2, function(x) sum(is.na(x)))  # counting NA numbers
+sapply(df2, function(x) sum(x == 0))    # Check for 0 if not valid
+```
+
+-   List errors
+
+    |  |  |  |  |  |  |  |  |  |
+    |--------|--------|--------|--------|--------|--------|--------|--------|--------|
+    |  |  |  |  |  |  |  |  |  |
+    |  | Cột |  | Lỗi/phát hiện |  | Lý do là lỗi |  | Cách sửa |  |
+    |  |  |  |  |  |  |  |  |  |
+    |  | `Glucose` |  | Có giá trị **0** |  | Glucose không thể bằng 0 ở người còn sống |  | Thay 0 bằng `NA`, sau đó điền bằng `median()` |  |
+    |  |  |  |  |  |  |  |  |  |
+    |  | `BloodPressure` |  | Có giá trị **0** |  | Không hợp lý (huyết áp tâm trương không thể 0) |  | Thay 0 bằng `NA`, sau đó điền bằng `median()` |  |
+    |  |  |  |  |  |  |  |  |  |
+    |  | `SkinThickness` |  | Có giá trị **0** |  | Không thể dày da gấp bằng 0 |  | Thay 0 bằng `NA`, sau đó điền bằng `median()` |  |
+    |  |  |  |  |  |  |  |  |  |
+    |  | `Insulin` |  | Có giá trị **0** |  | Giá trị 0 không hợp lý nếu không phải do thiếu đo |  | Thay 0 bằng `NA`, sau đó điền bằng `median()` |  |
+    |  |  |  |  |  |  |  |  |  |
+    |  | `BMI` |  | Có giá trị **0** |  | BMI không thể bằng 0 |  | Thay 0 bằng `NA`, sau đó điền bằng `median()` |  |
+    |  |  |  |  |  |  |  |  |  |
+    |  | `Pregnancies`, `Age`, `DiabetesPedigreeFunction`, `Outcome` |  | Không có lỗi rõ ràng |  | Giá trị hợp lý |  | Không cần xử lý |  |
+    |  |  |  |  |  |  |  |  |  |
+
+-   Cleaning data and error
+
+    ```{r}
+    # table of data before cleaned
+    print(df2)
+    ```
+
+```{r}
+# create a cleaned table of df2
+df2_cleaned <- df2
+
+# 2. cols have 0 data need to fix
+cols_to_fix <- c("Glucose", "BloodPressure", "SkinThickness", "Insulin", "BMI")
+
+# 3. change 0 = NA
+df2_cleaned[cols_to_fix] <- lapply(df2_cleaned[cols_to_fix], function(x) {
+  ifelse(x == 0, NA, x)
+})
+
+print(df2_cleaned)
+```
+
+```{r}
+# change NA = median
+df2_cleaned[cols_to_fix] <- lapply(df2_cleaned[cols_to_fix], function(x) {
+  ifelse(is.na(x), median(x, na.rm = TRUE), x)
+})
+
+print(df2_cleaned)
+```
+
+```{r}
+for (col in names(df_cleaned)) {
+  p <- ggplot(df_cleaned, aes_string(x = col)) +
+    geom_histogram(bins = 30, fill = "seagreen", color = "black") +
+    labs(title = paste("Histogram of", col, "after cleaning"),
+         x = col, y = "Frequency") +
+    theme_minimal()
+  print(p)
+}
+```

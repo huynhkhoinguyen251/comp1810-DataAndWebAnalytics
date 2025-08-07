@@ -1,0 +1,15 @@
+"0","for (col in names(df2)) {"
+"0","  p <- ggplot(df2, aes_string(x = col)) +"
+"0","    geom_histogram(bins = 30, fill = ""skyblue"", color = ""black"") +"
+"0","    labs(title = paste(""Histogram of"", col, ""before cleaning""),"
+"0","         x = col, y = ""Frequency"") +"
+"0","    theme_minimal()"
+"0","  "
+"0","  print(p)  # in từng biểu đồ ra"
+"0","}"
+"2","G2;H2;Warningh: [38;5;232m`aes_string()` was deprecated in ggplot2 3.0.0.
+[36mℹ[38;5;232m Please use tidy evaluation idioms with `aes()`.
+[36mℹ[38;5;232m See also `vignette(""ggplot2-in-packages"")` for more information.
+[90mThis warning is displayed once every 8 hours.[38;5;232m
+[90mCall `lifecycle::last_lifecycle_]8;;ide:run:warnings()warnings()]8;;` to see where this warning was generated.[38;5;232m[39mg
+"

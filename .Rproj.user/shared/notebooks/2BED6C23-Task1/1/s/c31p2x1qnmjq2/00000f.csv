@@ -1,0 +1,5 @@
+"0","#change to numeric instead of character"
+"0","df$Sessions <- as.numeric(gsub("","", """", df$Sessions))"
+"0","df$`Conversion.Rate....` <- as.numeric(gsub("","", """", df$`Conversion.Rate....`))"
+"0","df$Users <- as.numeric(gsub("","", """", df$Users))"
+"0","df$New.Users <- as.numeric(gsub("","", """", df$New.Users))"

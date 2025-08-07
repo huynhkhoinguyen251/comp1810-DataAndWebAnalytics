@@ -1,0 +1,4 @@
+"0","ggplot(relationship, aes(x = Bounce.Rate, y = Conversion.Rate....)) +"
+"0","  geom_point() +"
+"0","  geom_smooth(method = ""lm"", color = ""red"", se = FALSE) +"
+"0","  labs(title = ""Bounce Rate vs Conversion Rate chart"")"

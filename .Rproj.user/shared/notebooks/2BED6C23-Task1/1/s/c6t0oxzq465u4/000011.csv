@@ -1,0 +1,2 @@
+"0","df2 <- read.csv(""../data/diabetes.csv"", sep="","") "
+"0","print(df2)"
