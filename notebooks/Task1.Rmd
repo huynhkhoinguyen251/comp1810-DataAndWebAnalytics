@@ -90,8 +90,16 @@ ggplot(top_three_revenue, aes(x = factor(Year), y = total_revenue, fill = `Sourc
   
 labs(title = "Top three and the Revenue each year", 
 x = "Year", y = "Revenue (million)", fill = "Sources of Traffic") + 
-  
+
 theme_minimal()
+
+
+```
+
+```{r}
+df <- df %>%
+  mutate(thangtest = ifelse(Month.of.the.year%%2==0, "chan", "le"))
+print(df)
 ```
 
 ## b. Comparative analysis of the devices used by customers or visitors to access the site.
@@ -179,7 +187,7 @@ print(conversion_rate)
 conversion_rate$YearMonth <- paste(conversion_rate$Year, sprintf("%02d", conversion_rate$Month.of.the.year), sep = "-")
 
 #chart of Conversion
-ggplot(conversion_rate, aes(x = factor(YearMonth), y = total_conversion, fill = `Source...Medium`)) + geom_bar (stat = "identity", position = "dodge") + 
+ggplot(conversion_rate, aes(x = factor(YearMonth), y = total_conversion, fill = `Source...Medium`)) + geom_line (stat = "identity", position = "dodge") + 
 labs(title = " Total Conversion for each devices for each year and month ", 
 x = "Year and Month", y = "Total Conversion") + theme_minimal()
 ```
@@ -193,6 +201,14 @@ df$`Conversion.Rate....` <- as.numeric(df$`Conversion.Rate....`)
 df$Transactions <- as.numeric(gsub(",", "", df$Transactions))
 df$Revenue <- as.numeric(gsub(",", "", df$Revenue))
 
+```
+
+-   Create Relationship table
+
+```{r}
+relationship <- df %>%
+  select(Bounce.Rate, Conversion.Rate...., Transactions, Revenue)
+print(relationship)
 ```
 
 -   Create Cormatrix table
@@ -273,6 +289,17 @@ summary_stats <- data.frame(
   Median = sapply(df2, median, na.rm = TRUE),
   SD = sapply(df2, sd, na.rm = TRUE),
   Variance = sapply(df2, var, na.rm = TRUE)
+)
+
+print(summary_stats)
+```
+
+```{r}
+summary_stats <- df2(
+  Mean = sapply(mean, na.rm = TRUE),
+  Median = sapply(median, na.rm = TRUE),
+  SD = sapply(sd, na.rm = TRUE),
+  Variance = sapply(var, na.rm = TRUE)
 )
 
 print(summary_stats)

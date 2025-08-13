@@ -1,7 +1,0 @@
-"0","#view revenue"
-"0","df$Revenue <- as.numeric(gsub("","", """", df$Revenue))"
-"0","top_sources <- df %>%"
-"0","  group_by(Year, `Source...Medium`) %>%"
-"0","  summarise(total_revenue = sum(Revenue, na.rm = TRUE), .groups = ""drop"") %>%"
-"0","  arrange(desc(total_revenue)) %>%"
-"0","  print(total_revenue)"

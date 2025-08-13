@@ -1,9 +1,0 @@
-"0","# correlation analysis"
-"0","cor_matrix <- cor(relationship, use=""complete.obs"")        # use="""" check for NA"
-"0","print(cor_matrix)"
-"1","                    Bounce.Rate Conversion.Rate.... Transactions    Revenue
-Bounce.Rate          1.00000000          -0.4710521   0.04296341 0.04052681
-Conversion.Rate.... -0.47105211           1.0000000   0.30001564 0.30853394
-Transactions         0.04296341           0.3000156   1.00000000 0.97504259
-Revenue              0.04052681           0.3085339   0.97504259 1.00000000
-"
