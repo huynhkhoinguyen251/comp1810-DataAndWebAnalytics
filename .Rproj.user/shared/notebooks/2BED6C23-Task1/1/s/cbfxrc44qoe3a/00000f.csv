@@ -1,8 +1,0 @@
-"0","for (col in names(df_cleaned)) {"
-"0","  p <- ggplot(df_cleaned, aes_string(x = col)) +"
-"0","    geom_histogram(bins = 30, fill = ""seagreen"", color = ""black"") +"
-"0","    labs(title = paste(""Histogram of"", col, ""after cleaning""),"
-"0","         x = col, y = ""Frequency"") +"
-"0","    theme_minimal()"
-"0","  print(p)"
-"0","}"

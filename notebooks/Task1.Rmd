@@ -286,7 +286,7 @@ for (col in names(df2)) {
          x = col, y = "Frequency") +
     theme_minimal()
   
-  print(p)  # in từng biểu đồ ra
+  print(p)  # print each diagram
 }
 ```
 
@@ -306,26 +306,6 @@ str(df2)             # check out the data type per columns
 sapply(df2, function(x) sum(is.na(x)))  # counting NA numbers
 sapply(df2, function(x) sum(x == 0))    # Check for 0 if not valid
 ```
-
--   List errors
-
-    |  |  |  |  |  |  |  |  |  |
-    |--------|--------|--------|--------|--------|--------|--------|--------|--------|
-    |  |  |  |  |  |  |  |  |  |
-    |  | Cột |  | Lỗi/phát hiện |  | Lý do là lỗi |  | Cách sửa |  |
-    |  |  |  |  |  |  |  |  |  |
-    |  | `Glucose` |  | Có giá trị **0** |  | Glucose không thể bằng 0 ở người còn sống |  | Thay 0 bằng `NA`, sau đó điền bằng `median()` |  |
-    |  |  |  |  |  |  |  |  |  |
-    |  | `BloodPressure` |  | Có giá trị **0** |  | Không hợp lý (huyết áp tâm trương không thể 0) |  | Thay 0 bằng `NA`, sau đó điền bằng `median()` |  |
-    |  |  |  |  |  |  |  |  |  |
-    |  | `SkinThickness` |  | Có giá trị **0** |  | Không thể dày da gấp bằng 0 |  | Thay 0 bằng `NA`, sau đó điền bằng `median()` |  |
-    |  |  |  |  |  |  |  |  |  |
-    |  | `Insulin` |  | Có giá trị **0** |  | Giá trị 0 không hợp lý nếu không phải do thiếu đo |  | Thay 0 bằng `NA`, sau đó điền bằng `median()` |  |
-    |  |  |  |  |  |  |  |  |  |
-    |  | `BMI` |  | Có giá trị **0** |  | BMI không thể bằng 0 |  | Thay 0 bằng `NA`, sau đó điền bằng `median()` |  |
-    |  |  |  |  |  |  |  |  |  |
-    |  | `Pregnancies`, `Age`, `DiabetesPedigreeFunction`, `Outcome` |  | Không có lỗi rõ ràng |  | Giá trị hợp lý |  | Không cần xử lý |  |
-    |  |  |  |  |  |  |  |  |  |
 
 -   Cleaning data and error
 
