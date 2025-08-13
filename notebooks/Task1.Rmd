@@ -366,8 +366,8 @@ print(df2_cleaned)
 ```
 
 ```{r}
-for (col in names(df_cleaned)) {
-  p <- ggplot(df_cleaned, aes_string(x = col)) +
+for (col in names(df2_cleaned)) {
+  p <- ggplot(df2_cleaned, aes_string(x = col)) +
     geom_histogram(bins = 30, fill = "seagreen", color = "black") +
     labs(title = paste("Histogram of", col, "after cleaning"),
          x = col, y = "Frequency") +
